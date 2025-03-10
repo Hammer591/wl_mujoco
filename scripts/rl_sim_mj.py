@@ -38,7 +38,7 @@ class MuJoCoControl:
         self.last_actions = np.zeros(6)     # 存储上次执行的动作
 
         # 状态参数
-        self.gravity_vec = np.array([0, 0, -9.81])
+        self.gravity_vec = np.array([0, 0, -1.0])
         self.offset = 0
         self.l1 = 0.15
         self.l2 = 0.25
@@ -54,7 +54,7 @@ class MuJoCoControl:
         self.commands = np.array([0, 0, 0])
         self.target_linear_velocity = 0.0  # 初始化目标线速度
         self.target_angular_vel = 0.0      # 初始化目标角速度
-        self.target_z = 0.0                # 初始化目标z轴位置
+        self.target_z = 0.18                # 初始化目标z轴位置
         
         # 初始化 d_gains
         self.d_gains = torch.tensor(np.zeros((1, 6)))
@@ -155,17 +155,17 @@ class MuJoCoControl:
         z_value = 0.02 if action == glfw.PRESS else 0.0
         
         if key == glfw.KEY_W:
-            self.target_linear_velocity = speed_value    # 前进
+            self.target_linear_velocity += speed_value    # 前进
         elif key == glfw.KEY_S:
-            self.target_linear_velocity = -speed_value   # 后退
+            self.target_linear_velocity -= speed_value   # 后退
         elif key == glfw.KEY_A:
-            self.target_angular_vel = angular_value  # 左转
+            self.target_angular_vel += angular_value  # 左转
         elif key == glfw.KEY_D:
-            self.target_angular_vel = -angular_value # 右转
+            self.target_angular_vel -= -angular_value # 右转
         elif key == glfw.KEY_J:
-            self.target_z = z_value     # 上升
+            self.target_z += z_value     # 上升
         elif key == glfw.KEY_K:
-            self.target_z = -z_value    # 下降
+            self.target_z -= -z_value    # 下降
 
     def _get_imu_data(self):
         """获取所有传感器数据"""
@@ -231,11 +231,11 @@ class MuJoCoControl:
             self.base_quat, self.gravity_vec
         )
         
-        self.target_linear_vel_scale = 1
-        self.target_z_scale = 1
-        self.target_angular_vel_scale = 1
+        self.target_linear_vel_scale = 2.0
+        self.target_z_scale = 5.0
+        self.target_angular_vel_scale = 0.25
 
-        # 控制指令 [vx, z, wz]
+        # 控制指令 [vx, wz, z]
         self.commands = np.array(
             [
                 self.target_linear_velocity * self.target_linear_vel_scale ,
@@ -259,17 +259,22 @@ class MuJoCoControl:
             ]
         )
         
+        angular_vel_scale = 0.25
+        L0_scale = 5.0
+        L0_dot_scale = 0.25
+        dof_pos_scale = 1.0
+        dof_vel_scale = 0.05
         # 拼接观测向量
         obs = np.concatenate([
-            self.angular_velocity.numpy().flatten(),  # 3
+            self.angular_velocity.numpy().flatten() * angular_vel_scale,  # 3
             self.gravity_vec.flatten(),               # 3
-            self.commands.flatten(),                  # 3
-            self.theta0.flatten(),                    # 2
-            self.theta0_dot.flatten(),                # 2
-            self.L0.flatten(),                        # 2
-            self.L0_dot.flatten(),                    # 2    
-            self.wheel_pos.numpy().flatten(),         # 2
-            self.wheel_vel.numpy().flatten(),         # 2
+            self.commands.flatten() ,                  # 3
+            self.theta0.flatten() * dof_pos_scale,                    # 2
+            self.theta0_dot.flatten() * dof_vel_scale,                # 2
+            self.L0.flatten() * L0_scale,                        # 2
+            self.L0_dot.flatten() * L0_dot_scale,                    # 2    
+            self.wheel_pos.numpy().flatten() * dof_pos_scale,         # 2
+            self.wheel_vel.numpy().flatten() * dof_vel_scale,         # 2
             self.last_actions.flatten()               # 6
         ])
         return obs.astype(np.float32)  # 27维
@@ -311,6 +316,8 @@ class MuJoCoControl:
     
     def _apply_control(self, actions):
         """应用控制信号到执行器"""
+        # print(actions)
+        
         self.action_scale_theta = 0.5
         self.action_scale_l0 = 0.1
         self.action_scale_vel = 10.0
@@ -379,17 +386,17 @@ class MuJoCoControl:
             axis=1,
         )
 
-        print(f"torques: {torques}")
+        # print(f"torques: {torques}")
 
-        k = 0.001
-        # 电机位置控制
+        k = 1
+        # 电机控制
         self.data.ctrl[0] = torques[0, 0].item() * k  # lf0
         self.data.ctrl[1] = torques[0, 1].item() * k  # lf1
-        self.data.ctrl[3] = torques[0, 2].item() * k  # rf0
-        self.data.ctrl[4] = torques[0, 3].item() * k  # rf1
+        self.data.ctrl[3] = torques[0, 3].item() * k  # rf0
+        self.data.ctrl[4] = torques[0, 4].item() * k  # rf1
         
-        # 轮毂速度控制
-        self.data.ctrl[2] = torques[0, 4].item() * k  # 左轮
+        # 轮毂控制
+        self.data.ctrl[2] = torques[0, 2].item() * k  # 左轮
         self.data.ctrl[5] = torques[0, 5].item() * k  # 右轮
         
         # print(f"output: {output}")
@@ -429,7 +436,7 @@ class MuJoCoControl:
                 current_obs = torch.tensor(self._get_obs()).unsqueeze(0)  # 转换为 Tensor 并添加维度
                 # print(f"current_obs shape: {current_obs.shape}")  # 打印 current_obs 的形状
                 torch.set_printoptions(threshold=torch.inf)
-                # print("obs:", current_obs)
+                print("obs:", current_obs)
 
                 # 获取历史观测（用于策略网络输入）
                 obs_his = torch.tensor(self._get_obs_history()).unsqueeze(0)  # 转换为 Tensor 并添加维度

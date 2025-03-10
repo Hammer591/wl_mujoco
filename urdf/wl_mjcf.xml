@@ -1,5 +1,5 @@
 <mujoco model="wl">
-  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81" />
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -5.0" />
 
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
@@ -32,7 +32,7 @@
     <!-- <camera name="fixed" pos="0 -10.0 2.0" xyaxes="1 0 0 0 0 1" /> -->
     <camera name="track" mode="trackcom" pos="0 -5.0 0.69" xyaxes="1 0 0 0 0 1" />
     <body name="root" pos="0 0 0.5" quat="1 0 0 0">
-      <!-- <freejoint name="root" /> -->
+      <freejoint name="root" />
       <site name="torso" size="0.01" pos="0 0 0" />
       <geom name="base_collision" type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
       <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="1" conaffinity="0" />

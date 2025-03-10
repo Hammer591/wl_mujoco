@@ -1,11 +1,11 @@
 <mujoco model="wl">
-  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 0" />
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81" />
 
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
     <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
-    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
+    <geom condim="4" contype="2" conaffinity="2" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
     <default class="visualgeom">
@@ -27,48 +27,48 @@
   <worldbody>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
-    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" />
+    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" contype="1" conaffinity="15" />
     <!-- <camera name="side_view" mode="trackcom" pos="5.0 0 2.0" xyaxes="0 1 0 0 0 1" /> -->
     <!-- <camera name="fixed" pos="0 -10.0 2.0" xyaxes="1 0 0 0 0 1" /> -->
     <camera name="track" mode="trackcom" pos="0 -5.0 0.69" xyaxes="1 0 0 0 0 1" />
-    <body name="root" pos="0 0 0.3" quat="1 0 0 0">
-      <freejoint name="root" />
-      <site name="imu" size="0.01" pos="0 0 0" />
-      <geom name="base_collision" type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-      <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" />
+    <body name="root" pos="0 0 0.5" quat="1 0 0 0">
+      <!-- <freejoint name="root" /> -->
+      <site name="torso" size="0.01" pos="0 0 0" />
+      <geom name="base_collision" type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+      <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="1" conaffinity="0" />
       <body name="lf0_Link" pos="0.054 0.1705 0.131" quat="0.707105 -0.707108 0 0">
         <inertial pos="0.0597664 -0.00048182 0.0119824" quat="-0.0135897 0.745051 -0.0154639 0.66669" mass="0.16" diaginertia="0.00118422 0.00116062 5.03506e-05" />
         <joint name="lf0_Joint" pos="0 0 0" axis="0 0 1" range="-0.3363 1.3479" actuatorfrcrange="-30 30" />
-        <geom name="lf0_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf0_Link" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf0_Link" />
+        <geom name="lf0_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf0_Link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf0_Link" contype="1" conaffinity="0" />
         <body name="lf1_Link" pos="0.15 -0.00010199 0.0205">
           <inertial pos="-0.00032544 0.158998 0.00798168" quat="0.500939 0.48396 -0.498705 0.515884" mass="0.36" diaginertia="0.0125278 0.0124877 0.000104199" />
           <joint name="lf1_Joint" pos="0 0 0" axis="0 0 1" range="-1 1.25" actuatorfrcrange="-30 30" />
-          <geom name="lf1_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf1_Link" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf1_Link" />
+          <geom name="lf1_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf1_Link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="lf1_Link" contype="1" conaffinity="0" />
           <body name="l_wheel_Link" pos="1.857e-05 0.25 0.0275">
             <inertial pos="-4.507e-05 -0.00038447 0.0237603" quat="0.666367 0.00284682 0.0874849 0.740469" mass="1.22" diaginertia="0.00176063 0.00174355 0.00173939" />
-            <joint name="l_wheel_Joint" range="-5 5" pos="0 0 0" axis="0 0 1" actuatorfrcrange="-5 5" />
-            <geom name="l_wheel_collision" size="0.0675 0.0125" pos="0 0 0.03" type="cylinder" rgba="0.792157 0.819608 0.933333 1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="cylinder" size="0.0675 0.0125" rgba="0.792157 0.819608 0.933333 1" pos="0 0 0.03" />
+            <joint name="l_wheel_Joint" pos="0 0 0" axis="0 0 1" limited="false"/>
+            <geom name="l_wheel_collision" size="0.0675 0.0125" pos="0 0 0.03" type="cylinder" rgba="0.792157 0.819608 0.933333 1" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="cylinder" size="0.0675 0.0125" rgba="0.792157 0.819608 0.933333 1" pos="0 0 0.03" contype="1" conaffinity="0" />
           </body>
         </body>
       </body>
       <body name="rf0_Link" pos="0.054 -0.1705 0.131" quat="0.707105 0.707108 0 0">
         <inertial pos="0.0597664 -0.00048182 0.0119824" quat="-0.00848515 0.745134 -0.0107131 0.666775" mass="0.16" diaginertia="0.0011842 0.00116065 5.03478e-05" />
         <joint name="rf0_Joint" pos="0 0 0" axis="0 0 1" range="-1.3479 0.3363" actuatorfrcrange="-30 30" />
-        <geom name="rf0_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf0_Link" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf0_Link" />
+        <geom name="rf0_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf0_Link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf0_Link" contype="1" conaffinity="0" />
         <body name="rf1_Link" pos="0.15 9.5536e-05 0.0205">
           <inertial pos="0.00032544 -0.158998 0.00798168" quat="0.499449 0.516586 -0.500215 0.483192" mass="0.36" diaginertia="0.0125278 0.0124877 0.000104197" />
           <joint name="rf1_Joint" pos="0 0 0" axis="0 0 1" range="-1.25 1" actuatorfrcrange="-30 30" />
-          <geom name="rf1_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf1_Link" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf1_Link" />
+          <geom name="rf1_collision" type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf1_Link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="rf1_Link" contype="1" conaffinity="0" />
           <body name="r_wheel_Link" pos="1.5909e-05 -0.25 0.0275">
             <inertial pos="0.00038403 4.865e-05 0.0237603" quat="0.994132 0.0696225 -0.0602894 -0.0567401" mass="1.22" diaginertia="0.00176062 0.00174356 0.00173938" />
-            <joint name="r_wheel_Joint" range="-5 5" pos="0 0 0" axis="0 0 1" actuatorfrcrange="-5 5" />
-            <geom name="r_wheel_collision" size="0.0675 0.0125" pos="0 0 0.03" type="cylinder" rgba="0.792157 0.819608 0.933333 1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="cylinder" size="0.0675 0.0125" rgba="0.792157 0.819608 0.933333 1" pos="0 0 0.03" />
+            <joint name="r_wheel_Joint" pos="0 0 0" axis="0 0 1" limited="false"/>
+            <geom name="r_wheel_collision" size="0.0675 0.0125" pos="0 0 0.03" type="cylinder" rgba="0.792157 0.819608 0.933333 1" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="cylinder" size="0.0675 0.0125" rgba="0.792157 0.819608 0.933333 1" pos="0 0 0.03" contype="1" conaffinity="0" />
           </body>
         </body>
       </body>
@@ -76,35 +76,31 @@
   </worldbody>
 
   <actuator>
-    <position name="lf0_Joint" joint="lf0_Joint" ctrllimited="true" ctrlrange="-0.3363 1.3479" kp="10000" />
-    <position name="lf1_Joint" joint="lf1_Joint" ctrllimited="true" ctrlrange="-1 1.25" kp="10000000000000000000000" />
-    <velocity name="l_wheel_Joint" joint="l_wheel_Joint" ctrllimited="true" ctrlrange="-15 15" kv="100" />
-    <position name="rf0_Joint" joint="rf0_Joint" ctrllimited="true" ctrlrange="-1.3479 0.3363" kp="10000" />
-    <position name="rf1_Joint" joint="rf1_Joint" ctrllimited="true" ctrlrange="-1.25 1" kp="10" />
-    <velocity name="r_wheel_Joint" joint="r_wheel_Joint" ctrllimited="true" ctrlrange="-15 15" kv="100" />
+    <motor joint="lf0_Joint" name="lf0_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="lf1_Joint" name="lf1_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="l_wheel_Joint" name="l_wheel_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="rf0_Joint" name="rf0_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="rf1_Joint" name="rf1_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="r_wheel_Joint" name="r_wheel_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
   </actuator>
 
   <sensor>
-    <actuatorpos name="lf0_Joint_p" actuator="lf0_Joint" />
-    <actuatorvel name="lf0_Joint_v" actuator="lf0_Joint" />
-    <actuatorfrc name="lf0_Joint_f" actuator="lf0_Joint" noise="0.001" />
-    <actuatorpos name="lf1_Joint_p" actuator="lf1_Joint" />
-    <actuatorvel name="lf1_Joint_v" actuator="lf1_Joint" />
-    <actuatorfrc name="lf1_Joint_f" actuator="lf1_Joint" noise="0.001" />
-    <actuatorpos name="l_wheel_Joint_p" actuator="l_wheel_Joint" />
-    <actuatorvel name="l_wheel_Joint_v" actuator="l_wheel_Joint" />
-    <actuatorfrc name="l_wheel_Joint_f" actuator="l_wheel_Joint" noise="0.001" />
-    <actuatorpos name="rf0_Joint_p" actuator="rf0_Joint" />
-    <actuatorvel name="rf0_Joint_v" actuator="rf0_Joint" />
-    <actuatorfrc name="rf0_Joint_f" actuator="rf0_Joint" noise="0.001" />
-    <actuatorpos name="rf1_Joint_p" actuator="rf1_Joint" />
-    <actuatorvel name="rf1_Joint_v" actuator="rf1_Joint" />
-    <actuatorfrc name="rf1_Joint_f" actuator="rf1_Joint" noise="0.001" />
-    <actuatorpos name="r_wheel_Joint_p" actuator="r_wheel_Joint" />
-    <actuatorvel name="r_wheel_Joint_v" actuator="r_wheel_Joint" />
-    <actuatorfrc name="r_wheel_Joint_f" actuator="r_wheel_Joint" noise="0.001" />
-    <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
-    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
-    <accelerometer name="linear-acceleration" site="imu" noise="0.01" />
+    <framepos name="torso_pos" objtype="site" objname="torso" noise="0" />
+    <framequat name="torso_quat" objtype="site" objname="torso" noise="0.003" />
+      <framelinvel name="torso_linvel" objtype="site" objname="torso" noise="0" />
+      <frameangvel name="torso_angvel" objtype="site" objname="torso" noise="0.005" />
+      <framelinacc name="torso_linacc" objtype="site" objname="torso" noise="0.005" />
+    <jointpos name="lf0_Joint_p" joint="lf0_Joint" noise="0.001"/>
+    <jointvel name="lf0_Joint_v" joint="lf0_Joint" noise="0.001"/>
+    <jointpos name="lf1_Joint_p" joint="lf1_Joint" noise="0.001"/>
+    <jointvel name="lf1_Joint_v" joint="lf1_Joint" noise="0.001"/>
+    <jointpos name="l_wheel_Joint_p" joint="l_wheel_Joint" noise="0.001"/>
+    <jointvel name="l_wheel_Joint_v" joint="l_wheel_Joint" noise="0.001"/>
+    <jointpos name="rf0_Joint_p" joint="rf0_Joint" noise="0.001"/>
+    <jointvel name="rf0_Joint_v" joint="rf0_Joint" noise="0.001"/>
+    <jointpos name="rf1_Joint_p" joint="rf1_Joint" noise="0.001"/>
+    <jointvel name="rf1_Joint_v" joint="rf1_Joint" noise="0.001"/>
+    <jointpos name="r_wheel_Joint_p" joint="r_wheel_Joint" noise="0.001"/>
+    <jointvel name="r_wheel_Joint_v" joint="r_wheel_Joint" noise="0.001"/>
   </sensor>
 </mujoco>

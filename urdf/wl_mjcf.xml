@@ -1,5 +1,5 @@
 <mujoco model="wl">
-  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -5.0" />
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -2.0" />
 
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
@@ -27,12 +27,13 @@
   <worldbody>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
-    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" contype="1" conaffinity="15" />
+    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" contype="1" conaffinity="15" friction="1.0 0.5 0.5" />
     <!-- <camera name="side_view" mode="trackcom" pos="5.0 0 2.0" xyaxes="0 1 0 0 0 1" /> -->
     <!-- <camera name="fixed" pos="0 -10.0 2.0" xyaxes="1 0 0 0 0 1" /> -->
     <camera name="track" mode="trackcom" pos="0 -5.0 0.69" xyaxes="1 0 0 0 0 1" />
-    <body name="root" pos="0 0 0.5" quat="1 0 0 0">
+    <body name="root" pos="0 0 0.20" quat="1 0 0 0">
       <freejoint name="root" />
+      <!-- <joint name="root" type="slide" axis="0 0 1" limited="false" /> -->
       <site name="torso" size="0.01" pos="0 0 0" />
       <geom name="base_collision" type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="0" conaffinity="0" density="0" group="1" class="visualgeom" />
       <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="base_link" contype="1" conaffinity="0" />
@@ -78,10 +79,10 @@
   <actuator>
     <motor joint="lf0_Joint" name="lf0_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
     <motor joint="lf1_Joint" name="lf1_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
-    <motor joint="l_wheel_Joint" name="l_wheel_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="l_wheel_Joint" name="l_wheel_Joint" gear="1" ctrllimited="true" ctrlrange="-5 5"/>
     <motor joint="rf0_Joint" name="rf0_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
     <motor joint="rf1_Joint" name="rf1_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
-    <motor joint="r_wheel_Joint" name="r_wheel_Joint" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+    <motor joint="r_wheel_Joint" name="r_wheel_Joint" gear="1" ctrllimited="true" ctrlrange="-5 5"/>
   </actuator>
 
   <sensor>
